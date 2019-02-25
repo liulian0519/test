@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Echarts</title>
+    <!--引入echarts-->
+    <script src="js/echarts.js"></script>
+</head>
+<body>
+<div id="main" style="width:600px;height: 400px;"></div>
+<script type="text/javascript">
+    var mychart = echarts.init(document.getElementById('main'));
+    var base = +new Date(2019, 2, 11);
+    var oneDay = 24 * 3600 * 1000;
+    var date = [];
+
+    var data = [Math.random() * 150];
+    var now = new Date(base);
+
+    function addData(shift) {
+        now = [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/');
+        date.push(now);
+        data.push((Math.random() - 0.4) * 10 + data[data.length - 1]);
+
+        if (shift) {
+            // console.log(shift);
+            date.shift();
+            data.shift();
+        }
+
+        now = new Date(+new Date(now) + oneDay);
+    }
+
+    for (var i = 1; i < 100; i++) {
+        addData();
+        // console.log(addData())
+    }
+
+    option = {
+        xAxis: {
+            type: 'category',
+            // type 表示坐标轴的类型
+            boundaryGap: false,
+            data: date
+        },
+        yAxis: {
+            boundaryGap: [0, '50%'],
+            type: 'value'
+        },
+        series: [
+            {
+                name:'成交',
+                type:'line',
+                smooth:true,
+                symbol: 'none',
+                stack: 'a',
+                areaStyle: {
+                    normal: {}
+                },
+                data: data
+            }
+        ]
+    };
+    //注意这句话，从网站上扒下来的代码应该加上这句，
+    mychart.setOption(option);
+
+    setInterval(function () {
+        addData(true);
+        //这块的setoption只是为了显示动态数据
+        mychart.setOption({
+            xAxis: {
+                data: date
+            },
+            series: [{
+                name:'成交',
+                data: data
+            }]
+        });
+    }, 500);
+</script>
+</body>
+</html>
